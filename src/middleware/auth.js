@@ -56,6 +56,7 @@ export async function verifyToken(req, res, next) {
     }
 
     req.user = {
+      _id: user._id, // raw id, used when storing references
       id: user._id.toString(),
       name: user.name,
       email: user.email,
