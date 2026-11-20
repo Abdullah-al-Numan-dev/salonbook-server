@@ -4,9 +4,20 @@ export function notFound(req, res) {
 
 export function errorHandler(err, req, res, next) {
   console.error(err);
-  const status = err.status || 500;
+
+  let status = err.status || 500;
+  let message = err.message;
+
+  if (err.name === "MulterError") {
+    status = 400;
+    message =
+      err.code === "LIMIT_FILE_SIZE"
+        ? "Image must be 5MB or smaller"
+        : "Invalid file upload";
+  }
+
   res.status(status).json({
     success: false,
-    message: status === 500 ? "Internal server error" : err.message,
+    message: status === 500 ? "Internal server error" : message,
   });
 }
