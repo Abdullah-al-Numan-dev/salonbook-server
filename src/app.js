@@ -9,6 +9,7 @@ import uploadRoutes from "./routes/upload.routes.js";
 import appointmentRoutes from "./routes/appointments.routes.js";
 import adminAppointmentRoutes from "./routes/adminAppointments.routes.js";
 import adminUserRoutes from "./routes/adminUsers.routes.js";
+import paymentRoutes from "./routes/payments.routes.js";
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.get("/api/health", (req, res) => {
   res.json({ success: true, status: "ok", time: new Date().toISOString() });
 });
 
+app.use("/api/payments", paymentRoutes);
 app.use("/api/admin/users", verifyToken, requireAdmin, adminUserRoutes);
 app.use("/api/admin/appointments", verifyToken, requireAdmin, adminAppointmentRoutes);
 app.use("/api/appointments", appointmentRoutes);
