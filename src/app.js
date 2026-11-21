@@ -11,6 +11,7 @@ import adminAppointmentRoutes from "./routes/adminAppointments.routes.js";
 import adminUserRoutes from "./routes/adminUsers.routes.js";
 import paymentRoutes from "./routes/payments.routes.js";
 import adminTransactionRoutes from "./routes/adminTransactions.routes.js";
+import dashboardRoutes from "./routes/dashboard.routes.js";
 import { stripeWebhook } from "./controllers/webhooks.controller.js";
 
 const app = express();
@@ -44,6 +45,7 @@ app.use("/api/services", serviceRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 app.use("/api/admin/services", verifyToken, requireAdmin, adminServiceRoutes);
 app.use("/api/admin/appointments", verifyToken, requireAdmin, adminAppointmentRoutes);
@@ -54,5 +56,3 @@ app.use(notFound);
 app.use(errorHandler);
 
 export default app;
-
-// git commit -m "feat: add verified Stripe webhook and transactions"
