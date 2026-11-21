@@ -61,6 +61,7 @@ export async function verifyToken(req, res, next) {
       name: user.name,
       email: user.email,
       image: user.image || null,
+      phone: user.phone || "",
       role: user.role || "customer",
     };
 

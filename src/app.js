@@ -8,6 +8,7 @@ import { verifyToken, requireAdmin } from "./middleware/auth.js";
 import uploadRoutes from "./routes/upload.routes.js";
 import appointmentRoutes from "./routes/appointments.routes.js";
 import adminAppointmentRoutes from "./routes/adminAppointments.routes.js";
+import adminUserRoutes from "./routes/adminUsers.routes.js";
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.get("/api/health", (req, res) => {
   res.json({ success: true, status: "ok", time: new Date().toISOString() });
 });
 
+app.use("/api/admin/users", verifyToken, requireAdmin, adminUserRoutes);
 app.use("/api/admin/appointments", verifyToken, requireAdmin, adminAppointmentRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/upload", uploadRoutes);
