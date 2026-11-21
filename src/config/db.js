@@ -22,6 +22,12 @@ export async function connectDB() {
   );
   await db.collection("appointments").createIndex({ customerId: 1, createdAt: -1 });
 
+  await db.collection("transactions").createIndex(
+    { stripeSessionId: 1 },
+    { unique: true, name: "unique_stripe_session" }
+  );
+  await db.collection("transactions").createIndex({ customerId: 1, createdAt: -1 });
+
   console.log("MongoDB connected");
   return db;
 }

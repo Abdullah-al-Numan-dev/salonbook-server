@@ -1,9 +1,17 @@
 import { Router } from "express";
 import { verifyToken, requireCustomer } from "../middleware/auth.js";
-import { createCheckoutSession } from "../controllers/payments.controller.js";
+import {
+  createCheckoutSession,
+  getPaymentBySession,
+  listMyPayments,
+} from "../controllers/payments.controller.js";
 
 const router = Router();
 
-router.post("/checkout-session", verifyToken, requireCustomer, createCheckoutSession);
+router.use(verifyToken, requireCustomer);
+
+router.post("/checkout-session", createCheckoutSession);
+router.get("/my", listMyPayments);
+router.get("/session/:sessionId", getPaymentBySession);
 
 export default router;

@@ -85,3 +85,71 @@ export async function createCheckoutSession(req, res, next) {
     next(err);
   }
 }
+
+// GET /api/payments/session/:sessionId
+// Used by the Payment Success page. Reads the database, not the URL.
+export async function getPaymentBySession(req, res, next) {
+  try {
+    const transaction = await getDB()
+      .collection("transactions")
+      .findOne({ stripeSessionId: req.params.sessionId, customerId: req.user._id });
+
+    // The webhook may arrive a moment after the redirect
+    if (!transaction) {
+      return res.json({ success: true, data: null, processing: true });
+    }
+
+    const appointment = await getDB()
+      .collection("appointments")
+      .findOne({ _id: transaction.appointmentId });
+    const service = appointment
+      ? await getDB().collection("services").findOne({ _id: appointment.serviceId })
+      : null;
+
+    res.json({
+      success: true,
+      processing: false,
+      data: {
+        ...transaction,
+        serviceName: service?.serviceName || null,
+        appointmentDate: appointment?.appointmentDate || null,
+        timeSlot: appointment?.timeSlot || null,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// GET /api/payments/my
+export async function listMyPayments(req, res, next) {
+  try {
+    const data = await getDB()
+      .collection("transactions")
+      .aggregate([
+        { $match: { customerId: req.user._id } },
+        { $sort: { createdAt: -1 } },
+        { $lookup: { from: "appointments", localField: "appointmentId", foreignField: "_id", as: "appointment" } },
+        { $unwind: { path: "$appointment", preserveNullAndEmptyArrays: true } },
+        { $lookup: { from: "services", localField: "appointment.serviceId", foreignField: "_id", as: "service" } },
+        { $unwind: { path: "$service", preserveNullAndEmptyArrays: true } },
+        {
+          $project: {
+            amount: 1,
+            currency: 1,
+            stripeSessionId: 1,
+            status: 1,
+            createdAt: 1,
+            serviceName: "$service.serviceName",
+            appointmentDate: "$appointment.appointmentDate",
+            timeSlot: "$appointment.timeSlot",
+          },
+        },
+      ])
+      .toArray();
+
+    res.json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
+}
