@@ -56,9 +56,19 @@ Copy the printed `whsec_...` value into `STRIPE_WEBHOOK_SECRET`.
 | Admin | `/api/admin/services`, `/api/admin/appointments`, `/api/admin/users`, `/api/admin/transactions`, `GET /api/dashboard/admin` |
 | Stripe | `POST /api/webhooks/stripe` (signature verified) |
 
+## Deployment Guideline (Vercel)
+1. Import this repository into Vercel as a **Node.js** project (no framework preset needed).
+2. Set the environment variables listed above. In production, `CLIENT_URL`,
+   `AUTH_JWKS_URL` and `AUTH_ISSUER` must point to the deployed client:
+   `https://salonbook-client-rho.vercel.app` (JWKS: `.../api/auth/jwks`).
+3. Register `https://<your-server-domain>/api/webhooks/stripe` in Stripe and set
+   `STRIPE_WEBHOOK_SECRET` to the printed signing secret.
+4. Deploy, then set `NEXT_PUBLIC_API_URL` in the client project to this server's URL
+   and redeploy the client.
+
 ## Live Website Link
-_add after deployment_
+- Live site: https://salonbook-client-rho.vercel.app/
 
 ## Repository Links
-- Server repo: _add link_
-- Client repo: _add link_
+- Server repo: https://github.com/Abdullah-al-Numan-dev/salonbook-server
+- Client repo: https://github.com/Abdullah-al-Numan-dev/salonbook-client
